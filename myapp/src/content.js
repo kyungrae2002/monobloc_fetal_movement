@@ -74,15 +74,14 @@ const SKILLS_EN = [
   ['Circuit Design', 'Power System', 'Wiring', 'Electronics',
    'System Integration'],
   ['Fabrication', 'Welding', 'Metalwork', 'Structural Design', 'Assembly'],
-  ['Sound Design', 'Component Design', 'Spatial Sound', 'Structure Design',
-   'Assembly'],
+  ['Sound Design', 'Component Design', 'Spatial Sound', 'Sketch'],
 ];
 
 const SKILLS_KO = [
   ['프로젝트 총괄', '프로그래밍', '제어 시스템', '인터랙션 디자인', '센서 연동'],
   ['회로 설계', '전원 시스템', '배선', '전자 부품', '시스템 통합'],
   ['제작', '용접', '금속 가공', '구조 설계', '조립'],
-  ['사운드 디자인', '부품 디자인', '공간 음향', '구조 디자인', '조립'],
+  ['사운드 디자인', '부품 디자인', '공간 음향', '스케치'],
 ];
 
 // The making, in order. The one-word key is the same in either language - it is
