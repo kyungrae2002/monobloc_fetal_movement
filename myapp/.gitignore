@@ -21,3 +21,9 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# The originals only - tens of megabytes of phone photographs that nothing in
+# the build reads. public/process/ is deliberately NOT ignored: the deploy runs
+# npm run build and nothing else, so the resized copies have to be committed or
+# every photograph on the live site is a broken image. See tools/prep-photos.py.
+photos-src/

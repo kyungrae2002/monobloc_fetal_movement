@@ -1,13 +1,25 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  /* Stops iOS Safari enlarging text in landscape, which would break the
+     carefully small micro-labels the layout depends on. */
+  -webkit-text-size-adjust: 100%;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+body {
+  margin: 0;
+  background: #14120f;   /* must match --ground in App.css */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* The page is one continuous scroll and nothing scrolls sideways; this keeps
+     a stray horizontal drag from revealing the edge of the drifting marks. */
+  overscroll-behavior-x: none;
+}
+
+button {
+  font: inherit;
+  /* Android and iOS paint a translucent block over anything tappable. Every
+     control here has its own pressed state, so the default is only ever a
+     rectangle in the wrong shape flashing over a round dot or a soft outline. */
+  -webkit-tap-highlight-color: transparent;
 }

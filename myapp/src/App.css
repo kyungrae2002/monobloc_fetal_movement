@@ -1,38 +1,671 @@
-.App {
-  text-align: center;
+/* Mobile first throughout. Nearly everyone reaches this page by scanning a card
+   with a phone, so the portrait layout is the design and the wider rules at the
+   bottom are the adaptation - not the other way round. */
+
+:root {
+  /* Inverted: the ivory and the near-black have swapped places. Both keep their
+     warmth - a neutral black under warm ivory type reads as a cold hole. */
+  --ground: #14120f;
+  --ink: #efece4;
+  /* Lifted from the straight inversion: greys that read as quiet on a pale
+     ground read as unlit on a dark one. */
+  --ink-soft: #bdb7ab;
+  --ink-faint: #8b857a;
+  --rule: #33302a;
+  --accent: #e2401c;      /* errors only - everything that glows glows in ink */
+
+  --sans: 'Helvetica Neue', Helvetica, -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+
+  --pad: 22px;
 }
 
-.App-logo {
-  height: 40vmin;
+.app {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--sans);
+  /* The opening is one screen, not a scroll. dvh rather than vh so the drifting
+     cards are not hidden under the phone browser's collapsing toolbar. */
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Micro-labels. 10-11px rather than the 8px the desktop references use: below
+   about 10 these stop being readable on a phone and become pure texture. */
+.mono {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.lbl { color: var(--ink-faint); }
+.val { color: var(--ink); text-transform: none; letter-spacing: 0.02em; }
+
+/* ---------- frame ---------- */
+/* The masthead is the only thing anchored to the screen, so it sits hard in the
+   corner - the drifting cards need the rest of the space to themselves. */
+.hdr {
+  flex: none;
+  padding: max(14px, env(safe-area-inset-top)) var(--pad) 6px;
+}
+
+/* The wordmark is a drawing, so it is an image rather than type with a filter
+   over it. Width is capped as a share of the screen so it stays a mark in the
+   corner instead of a banner across the top. */
+.masthead {
+  display: block;
+  width: 162px;
+  max-width: 47vw;
+  height: auto;
+}
+
+/* The pill shape is lifted from the reference's Flat / Tilt / Ring switcher.
+   Sized well past the 44px thumb minimum: at 34px people who had not seen the
+   page before kept missing these, and they are the only way out of a panel. */
+.pill {
+  min-width: 78px;
+  min-height: 50px;
+  padding: 15px 24px;
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--ground);
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+}
+.pill:active { opacity: 0.7; }
+
+/* Square, so the mark sits centred rather than floating in a wide lozenge. */
+.pill.icon {
+  min-width: 50px;
+  width: 50px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.pill.icon svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  fill: none;
+}
+
+/* ---------- drifting canvas ---------- */
+.canvas {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  /* The field is held and dragged, not read. Without this a press that drifts a
+     few pixels starts selecting the tiny card labels, and the selection stays
+     highlighted afterwards. */
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: none;
+  cursor: grab;
+}
+.canvas:active { cursor: grabbing; }
+
+/* Spokes from the hub out to each card. Below every card so the shapes cut the
+   lines off, which is what makes them read as attached rather than drawn over. */
+.spokes {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
   pointer-events: none;
+  overflow: visible;
+}
+.spokes path { stroke-width: 1.7; stroke-linecap: round; }
+
+/* Empty outlined rectangles stand in for the photographs that will replace them.
+   The label stays put underneath, so dropping images in later changes the
+   picture without disturbing the composition. */
+.card {
+  position: absolute;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  /* No transition: React sets these every frame, and easing on top of that
+     smears the motion instead of smoothing it. */
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* The outline is a path, not a border, so the edge can bulge. preserveAspect-
+   Ratio is off and the viewBox matches the card's proportions exactly, so the
+   stretch stays uniform and the stroke does not go oval. */
+.blob {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+/* Heavier than a border but not at full strength: weight and looseness together
+   are what make it read as a pencil line rather than a bolder outline. */
+.blob path {
+  fill: color-mix(in srgb, var(--ground) 62%, #000);
+  stroke-width: 1.9;
+  stroke-opacity: 0.72;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+/* The pressed state the tap highlight was standing in for. */
+.card:active .blob path { stroke: var(--ink); }
+.send:active { opacity: 0.75; }
+.opt:active { border-color: var(--ink); }
+
+.tag {
+  position: absolute;
+  left: 0;
+  bottom: -18px;
+  font-size: 12px;
+  white-space: nowrap;
+  color: var(--ink-faint);
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* ---------- detail panel ---------- */
+.panel {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: var(--ground);
+  display: flex;
+  flex-direction: column;
+  animation: rise 260ms cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* When the panel knows which card was tapped it opens from there instead: the
+   background rectangle scales up out of the card's own footprint while the text
+   fades in on top. The panel itself no longer animates, or the two would fight. */
+.panel.growing { animation: none; background: none; }
+
+.panel-ground { display: none; }
+
+.panel.growing .panel-ground {
+  display: block;
+  position: absolute;
+  inset: 0;
+  background: var(--ground);
+  transform-origin: 0 0;
+  animation: growFromCard 500ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
+}
+
+@keyframes growFromCard {
+  from { transform: translate(var(--gx), var(--gy)) scale(var(--gsx), var(--gsy)); }
+  to { transform: none; }
+}
+
+/* Fading out takes over from whatever was animating in - listed after those
+   rules, and repeated for the grown variant, so it wins without !important. */
+.panel.closing,
+.panel.growing.closing { animation: panelOut 500ms ease both; }
+.panel.growing.closing { background: var(--ground); }
+.panel.growing.closing .panel-ground,
+.panel.growing.closing > *:not(.panel-ground) { animation: none; }
+
+@keyframes panelOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* Held back until the rectangle has most of the way there, so the words arrive
+   in a space that already exists rather than being stretched into one. The
+   delay moves with the growth: at 500ms, waiting only 140ms would put the text
+   on screen while the box was still visibly travelling. */
+.panel.growing > *:not(.panel-ground) {
+  animation: settle 300ms ease 220ms both;
+}
+@keyframes settle {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.panel-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: max(12px, env(safe-area-inset-top)) var(--pad) 10px;
+  flex: none;
+  border-bottom: 1px solid var(--rule);
+}
+
+.panel-body {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 32px var(--pad) max(48px, env(safe-area-inset-bottom));
+}
+
+/* Same size as the prose it sits above, just heavier. A display-sized heading
+   was doing the work of a label and pushing the actual text off the screen. */
+.panel-title {
+  margin: 0 0 16px;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+}
+
+/* No gap between lines: consecutive lines in a card are one piece of writing,
+   and a paragraph break between each made two sentences look like two
+   unrelated notes. The line height does the separating. */
+.body {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.62;
+  max-width: 34em;
+}
+
+/* ---------- zone stage ---------- */
+.zones { margin-top: 28px; }
+
+.stage {
+  padding: 20px 16px 14px;
+  cursor: pointer;
+  /* Android paints a blue flash over anything tappable unless told not to. */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  border: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--ground) 55%, #000);
+  /* Border and inner glow are set from React and change every frame in zone 0;
+     easing them keeps the blink from looking like a flicker. */
+  transition: box-shadow 220ms ease, border-color 220ms ease;
+}
+
+.axes {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px;
+  height: 168px;
+}
+.axis {
+  flex: 1;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  justify-content: flex-end;
+}
+.bar { width: 100%; background: var(--ink); transition: height 120ms linear; }
+.idx { margin-top: 8px; font-size: 9px; color: var(--ink-faint); }
+
+/* Four marks that can still be counted. The wash says how bright the room is;
+   these say how many lamps are doing it, which brightness alone cannot. */
+.lamps { display: flex; gap: 8px; margin-top: 16px; }
+.lamp {
+  width: 100%;
+  height: 6px;
+  background: var(--rule);
+  transition: background 180ms ease, box-shadow 180ms ease;
+}
+.lamp.on { background: var(--ink); }
+
+/* Native range input: it is the one control every phone already knows how to
+   drag, and it gets keyboard and screen-reader support for free. */
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  margin: 26px 0 6px;
+  height: 34px;              /* comfortable thumb target */
+  background: transparent;
+  cursor: pointer;
+}
+.slider::-webkit-slider-runnable-track { height: 1px; background: var(--ink-faint); }
+.slider::-moz-range-track { height: 1px; background: var(--ink-faint); }
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 26px;
+  height: 26px;
+  margin-top: -13px;
+  border-radius: 50%;
+  background: var(--ink);
+}
+.slider::-moz-range-thumb {
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--ink);
+}
+.drag { display: block; text-align: center; font-size: 9px; }
+
+.rowline {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.rowline:first-of-type { margin-top: 18px; }
+.zonenum { font-size: 30px; font-weight: 600; letter-spacing: -0.02em; line-height: 1; }
+.desc { margin: 16px 0 0; font-size: 19px; letter-spacing: -0.01em; }
+
+.metrics, .colophon { margin: 26px 0 0; display: grid; gap: 12px; }
+.metrics > div, .colophon > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+.colophon > div { padding-bottom: 10px; border-bottom: 1px solid var(--rule); }
+.metrics dt, .metrics dd, .colophon dt, .colophon dd { margin: 0; }
+.metrics dd, .colophon dd { text-align: right; }
+
+/* ---------- credits ---------- */
+/* Same hairline between entries as the colophon, so the two read as one system
+   rather than two different lists that happen to share a panel. */
+.roles,
+.steps {
+  margin: 26px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 20px;
 }
 
-.App-link {
-  color: #61dafb;
+.roles li,
+.steps li { padding-bottom: 20px; border-bottom: 1px solid var(--rule); }
+.roles li:last-child,
+.steps li:last-child { padding-bottom: 0; border-bottom: 0; }
+
+/* The stage label leads and the title follows it, the reverse of the credits
+   list - there the person comes first, here the order of the work does. */
+.steps .lbl { margin: 0 0 4px; }
+.steps .body { margin-top: 6px; font-size: 16px; }
+
+/* The photograph sits between the stage name and the account of it: the name
+   says which step, the picture shows it, the sentence explains it. */
+.shot { margin: 12px 0 0; }
+/* Leading a card rather than sitting inside a list, so it needs the room the
+   list items give their own photographs. */
+.shot.lead { margin: 22px 0 26px; }
+.shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 3px;
+  /* Fills the reserved box while the file is still coming down, so the panel
+     does not flash a bright hole in a dark page on a slow connection. */
+  background: var(--rule);
 }
 
-@keyframes App-logo-spin {
+/* The name is the point of a credits list, so it is the one line here set in
+   readable ink. The role under it stays a micro-label: at 11px, faint and
+   tracked out, a Korean name would have been the least legible thing on the
+   card - which is the wrong way round. */
+.who,
+.steptitle {
+  margin: 0 0 3px;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.roles .lbl { margin: 0 0 10px; }
+.roles .body { font-size: 16px; }
+
+/* Baseline-aligned so the small type sits on the name's line rather than on
+   the middle of it. Both wrap, and the row's own wrapping keeps the chips with
+   the name when the address is too long to fit beside it. */
+.whorow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 12px;
+}
+
+/* text-transform is cleared deliberately: .mono uppercases everything, and an
+   address is not a label - shouting a handle back at someone who has to type it
+   makes it harder to read and harder to trust. */
+.panel-body > .contact { margin: 22px 0 0; }
+
+.contact {
+  margin: 0;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* The dotted outline is the tap target made visible: at 11px these are the
+   smallest things on the page anyone is asked to hit, and the border draws
+   where the finger actually works rather than leaving it to be guessed. The
+   min-height is what holds that box at a thumb's size regardless of the type. */
+.contact a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 34px;
+  padding: 6px 11px;
+  border: 1px dotted var(--ink-faint);
+  border-radius: 999px;
+  color: var(--ink-soft);
+  text-decoration: none;
+  word-break: break-word;
+}
+.contact a:active { color: var(--ink); border-color: var(--ink); }
+
+/* Sized against the type rather than fixed, so the mark keeps its proportion to
+   the address next to it if the label size is ever changed. */
+.cicon {
+  width: 1.3em;
+  height: 1.3em;
+  flex: none;
+  display: block;
+}
+
+/* ---------- wider screens ---------- */
+@media (min-width: 720px) {
+  :root { --pad: 48px; }
+  .panel-body { padding: 56px var(--pad) 80px; }
+  .body, .panel-title { font-size: 19px; }
+  .axes { height: 240px; gap: 20px; }
+  .metrics { grid-template-columns: repeat(3, 1fr); gap: 28px; }
+  .metrics > div { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .metrics dd { text-align: left; }
+}
+
+/* Someone who has asked their phone to stop animating gets a still page: the
+   clocks are already halted in JS, and this keeps the rest in step. */
+@media (prefers-reduced-motion: reduce) {
+  .panel { animation: none; }
+  .panel.growing { background: var(--ground); }
+  .panel.growing .panel-ground,
+  .panel.growing > *:not(.panel-ground) { animation: none; }
+  .lit { animation: none; }
+  .bar, .lamp { transition: none; }
+}
+
+/* ---------- survey ---------- */
+.survey { margin-top: 30px; }
+.survey.done { margin-top: 40px; }
+
+/* Fieldsets carry the grouping for screen readers; the browser's own border
+   and padding are in the way of the layout, so they go. */
+.qblock { border: 0; padding: 0; margin: 0 0 32px; }
+.qblock legend { padding: 0; }
+.qblock .desc { margin: 8px 0 14px; font-size: 17px; }
+
+.opts { display: flex; flex-wrap: wrap; gap: 8px; }
+.opt {
+  min-height: 44px;                /* comfortable thumb target */
+  padding: 11px 18px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-soft);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.opt.on { border-color: var(--ink); background: var(--ink); color: var(--ground); }
+
+.note {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid var(--rule);
+  background: color-mix(in srgb, var(--ground) 55%, #000);
+  color: var(--ink);
+  font-family: var(--sans);
+  /* 16px minimum: anything smaller and iOS Safari zooms the page on focus. */
+  font-size: 16px;
+  line-height: 1.5;
+  resize: vertical;
+}
+.note:focus { outline: 1px solid var(--ink); border-color: var(--ink); }
+
+.send {
+  width: 100%;
+  min-height: 52px;
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--ground);
+  font-family: var(--sans);
+  /* A tick has to be bigger than a word to carry the same weight. */
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+.send:disabled { opacity: 0.35; cursor: default; }
+
+.warn { display: block; margin: 0 0 14px; color: var(--accent); }
+
+/* Two pills sit together at the top of a panel; the language one is quieter so
+   CLOSE stays the obvious target. The gap is wide enough that a thumb aiming
+   for one does not catch the other. */
+.panel-actions { display: flex; gap: 12px; }
+.pill.ghost {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--rule);
+}
+.pill.ghost:active { border-color: var(--ink); }
+
+/* The hub. An 8px dot inside a 44px target: small enough to read as a point,
+   big enough to find with a thumb. */
+.hub {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.hub::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 44px;
+  height: 44px;
+}
+.hub.held { width: 15px; height: 15px; }
+
+/* A press-and-hold control must not also start a text selection or a scroll
+   gesture on the way down. */
+.hub {
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* The line that lands first after an answer is sent. */
+.thanks {
+  margin: 0 0 18px;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/* The lines come up one at a time and stay up. The delays set in App.js start
+   them 1.5s apart, so the note lights along its own length and then holds.
+   `both` matters at both ends: before its turn a line sits at the unlit
+   keyframe, and after it the glow is held rather than snapping back off. */
+.lit { animation: lineGlow 1.2s ease-in-out 1 both; }
+
+@keyframes lineGlow {
   from {
-    transform: rotate(0deg);
+    color: inherit;
+    text-shadow: none;
   }
   to {
-    transform: rotate(360deg);
+    color: rgba(239,236,228,0.8);
+    text-shadow: 0 0 7px rgba(239,236,228,0.26);
   }
+}
+.survey.done .body { color: var(--ink-soft); }
+
+/* ---------- zone stage: chart beside its control ---------- */
+.stage { display: flex; align-items: stretch; gap: 16px; }
+.stage-main { flex: 1; min-width: 0; }
+
+/* The drag column. Wide enough to be a comfortable target, with the visible
+   line drawn down its centre. */
+.vtrack {
+  position: relative;
+  flex: none;
+  width: 44px;
+  touch-action: none;          /* the drag is ours, not the page's */
+  cursor: grab;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.vtrack:active { cursor: grabbing; }
+.vtrack:focus-visible { outline: 1px solid var(--ink); outline-offset: 2px; }
+
+.vline {
+  position: absolute;
+  left: 50%;
+  top: 6px;
+  bottom: 6px;
+  width: 1.7px;
+  transform: translateX(-50%);
+  background: var(--rule);
+}
+
+/* One notch per zone, so the five stops are visible before anything is dragged. */
+.vtick {
+  position: absolute;
+  left: 50%;
+  width: 12px;
+  height: 1.7px;
+  transform: translate(-50%, -50%);
+  background: var(--rule);
+}
+
+.vthumb {
+  position: absolute;
+  left: 50%;
+  width: 18px;
+  height: 18px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: var(--ink);
+  /* Long enough to be seen travelling: a tap anywhere on the track sends it
+     there, and a jump would read as a redraw rather than as movement. */
+  transition: top 300ms cubic-bezier(0.2, 0.7, 0.3, 1);
 }
