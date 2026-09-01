@@ -51,11 +51,31 @@ export const SURVEY_KEYS = [
   { key: 'meaning', values: [5, 4, 3, 2, 1] },
 ];
 
-// Who did what. Names and role titles are the same in either language, so they
-// live here once: a name is a name, and a Korean rendering of "Project Lead"
-// would read as a translation of a title rather than as the title. Only the
-// sentence under each one is translated, and the two lists below are matched to
-// this one by position - which is why neither is sorted anywhere.
+// Who did what. Nothing here is translated: names are names, and the roles and
+// skills are the same short English terms in either language - a Korean
+// rendering of "Project Lead" would read as a translation of a title rather
+// than as the title. The EN toggle therefore changes nothing on this card,
+// which is the honest outcome rather than an oversight.
+//
+// [name, role, skills, contact] - contact is optional.
+export const TEAM = [
+  ['양희상', 'Project Lead',
+   ['Project Management', 'Programming', 'Control System', 'Interaction Design',
+    'Sensor Integration'],
+   { mail: 'alex3918@g.hongik.ac.kr', ig: 'hs.uy5' }],
+  ['이소울', 'Electrical',
+   ['Circuit Design', 'Power System', 'Wiring', 'Electronics',
+    'System Integration'],
+   { mail: 'viceversa2188@naver.com' }],
+  ['이원준', 'Fabrication',
+   ['Fabrication', 'Welding', 'Metalwork', 'Structural Design', 'Assembly'],
+   { mail: 'C342019@naver.com', ig: '2onejun' }],
+  ['전진', 'Sound & Component Design',
+   ['Sound Design', 'Component Design', 'Spatial Sound', 'Structure Design',
+    'Assembly'],
+   { mail: 'gpfzpf@naver.com', ig: 'jhanstin__' }],
+];
+
 // The making, in order. The one-word key is the same in either language - it is
 // a stage name, not prose - so it lives here once and the numbering comes from
 // position, the same arrangement as TEAM. The two lists below hold only the
@@ -90,33 +110,6 @@ const STEPS_KO = [
    '완성된 프레임 내부에 회로와 액추에이터를 배치하고, 센서 · 움직임 · 조명이 하나의 시스템으로 작동하도록 결합했습니다.'],
   ['외피 제작',
    '구조물 위에 스타킹 소재를 감싸고 직접 바느질해 움직임에 따라 자연스럽게 늘어나고 수축하는 표면을 완성했습니다.'],
-];
-
-// The third entry is contact details and is optional - anyone without one
-// simply has no contact line, rather than an empty one holding space open.
-export const TEAM = [
-  ['양희상', 'Project Lead · Programming & Control',
-   { mail: 'alex3918@g.hongik.ac.kr', ig: 'hs.uy5' }],
-  ['이소울', 'Circuit · Electrical',
-   { mail: 'viceversa2188@naver.com' }],
-  ['이원준', 'Fabrication · Welding',
-   { mail: 'wonjoon@gmail.com', ig: '2onejun' }],
-  ['전진',   'Sound · Component Design',
-   { mail: 'gpfzpf@naver.com', ig: 'jhanstin__' }],
-];
-
-const ROLES_EN = [
-  'Led the project as a whole, and built the programming and control system that ties what the sensor reads to how the actuators move.',
-  'Handled the wiring and the power layout, connecting the electrical parts the piece runs on and making them hold up in use.',
-  'Made the internal frame and the outer structure, and carried out the physical build, welding included.',
-  'Put together the sound of the piece, and designed the internal parts and structural elements.',
-];
-
-const ROLES_KO = [
-  '전체 프로젝트를 총괄하고, 센서 입력과 액추에이터 동작을 연결하는 프로그래밍 및 제어 시스템을 담당했습니다.',
-  '회로 결선과 전원 구성을 담당하고, 작품에 사용되는 전기 부품의 연결과 안정적인 동작을 구현했습니다.',
-  '작품의 내부 뼈대와 외형 구조를 제작하고, 용접을 포함한 실제 제작 과정을 담당했습니다.',
-  '작품의 음향 구성을 담당하고, 내부 부품 및 구조 요소의 디자인을 진행했습니다.',
 ];
 
 const COLOPHON_EN = [
@@ -204,14 +197,12 @@ export const CONTENT = {
         colophon: COLOPHON_EN,
       },
       {
-        body: [
-          'The piece came together in stages: designing the exterior, fabricating the structure, building the circuit, and finishing the skin.',
-        ],
+        body: [],
         steps: STEPS_EN,
       },
       {
         body: [],
-        roles: ROLES_EN,
+        roles: true,
       },
       {
         body: [],
@@ -287,14 +278,12 @@ export const CONTENT = {
         colophon: COLOPHON_KO,
       },
       {
-        body: [
-          '작품은 외형 설계부터 구조 제작, 회로 구현, 외피 마감까지 여러 제작 과정을 거쳐 완성되었습니다.',
-        ],
+        body: [],
         steps: STEPS_KO,
       },
       {
         body: [],
-        roles: ROLES_KO,
+        roles: true,
       },
       {
         body: [],

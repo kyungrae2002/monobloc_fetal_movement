@@ -5,19 +5,19 @@
 // arrive a few at a time.
 const PHOTOS = {
   "01": {
-    "h": 886,
+    "h": 885,
     "src": "/process/01.jpg",
     "w": 1400
   },
   "02": {
-    "h": 1400,
+    "h": 1373,
     "src": "/process/02.jpg",
-    "w": 1130
+    "w": 1146
   },
   "03": {
-    "h": 1284,
+    "h": 1202,
     "src": "/process/03.jpg",
-    "w": 1400
+    "w": 1309
   },
   "04": {
     "h": 1400,

@@ -416,7 +416,28 @@
   letter-spacing: -0.01em;
 }
 .roles .lbl { margin: 0 0 10px; }
-.roles .body { font-size: 16px; }
+
+/* Filled, where the contact chips are outlined. The difference is the point:
+   one pair of shapes on this card can be tapped and the rest cannot, and a
+   skill that looks like a link is a small lie the finger finds out. */
+.skills {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.skills li {
+  padding: 5px 9px;
+  border-radius: 3px;
+  background: var(--rule);
+  color: var(--ink-soft);
+  text-transform: none;
+  letter-spacing: 0.01em;
+  line-height: 1.3;
+}
 
 /* Baseline-aligned so the small type sits on the name's line rather than on
    the middle of it. Both wrap, and the row's own wrapping keeps the chips with
