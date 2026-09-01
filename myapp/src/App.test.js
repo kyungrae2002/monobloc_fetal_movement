@@ -30,17 +30,17 @@ test('a panel opens in Korean and switches to English, headings staying put', ()
   fireEvent.click(cards()[1]);
   const panel = screen.getByRole('dialog');
 
-  expect(panel).toHaveTextContent('다섯 개의 축이 벽 안에서 숨을 쉽니다.');
+  expect(panel).toHaveTextContent('다섯 개의 축이 막 안에서 숨을 쉽니다.');
   expect(panel).toHaveTextContent('Work');          // heading is never translated
 
   fireEvent.click(screen.getByRole('button', { name: 'language' }));
-  expect(panel).toHaveTextContent('Five axes breathe inside a wall.');
+  expect(panel).toHaveTextContent('Five axes breathe inside a membrane.');
   expect(panel).toHaveTextContent('Work');
   // The drifting labels are never translated either.
   expect(screen.getByAltText('FETAL MOVEMENT : TEAM MONOBLOC')).toBeInTheDocument();
 
   fireEvent.click(screen.getByRole('button', { name: 'language' }));
-  expect(panel).toHaveTextContent('다섯 개의 축이 벽 안에서 숨을 쉽니다.');
+  expect(panel).toHaveTextContent('다섯 개의 축이 막 안에서 숨을 쉽니다.');
 });
 
 test('the location card carries the address and a way to open it in maps', () => {

@@ -969,7 +969,7 @@ function Panel({ copy, keys, card, from, onClose, onLang }) {
 
         {card.roles && (
           <ol className="roles">
-            {TEAM.map(([who, role, skills, contact]) => (
+            {TEAM.map(([who, role, contact], i) => (
               <li key={who}>
                 {/* Name and contacts share a row and wrap together, so a long
                     address drops to the next line still attached to the person
@@ -1006,8 +1006,10 @@ function Panel({ copy, keys, card, from, onClose, onLang }) {
                     above them and must not invite the same tap. The dotted
                     outline is reserved for the two things that actually go
                     somewhere. */}
+                {/* Matched to TEAM by position: card.roles holds only the
+                    translated skill lists, in the same order. */}
                 <ul className="skills">
-                  {skills.map((skill) => (
+                  {card.roles[i].map((skill) => (
                     <li key={skill} className="mono">{skill}</li>
                   ))}
                 </ul>

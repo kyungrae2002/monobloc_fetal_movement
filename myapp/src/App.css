@@ -430,6 +430,9 @@
 }
 
 .skills li {
+  /* A point up from the other micro-labels. These are the only ones that carry
+     Korean, and 11px Latin and 11px Hangul are not the same read. */
+  font-size: 12px;
   padding: 5px 9px;
   border-radius: 3px;
   background: var(--rule);

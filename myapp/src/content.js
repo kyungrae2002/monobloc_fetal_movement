@@ -29,7 +29,10 @@ export const SHARED = {
 // would leave the visitor looking at a panel that appears to be a different
 // card from the one they tapped. Only the prose below it changes language.
 export const CARD_KEYS = [
-  { id: '01', tag: 'location', title: 'Location' },
+  // The drifting label stays short while the panel heading carries the full
+  // name: the label is positioned below its card and never wrapped, so a long
+  // one runs off the screen edge when the card drifts right.
+  { id: '01', tag: 'location', title: 'Location & Caption' },
   { id: '02', tag: 'work', title: 'Work' },
   { id: '03', tag: 'process', title: 'Process' },
   { id: '04', tag: 'team', title: 'Team' },
@@ -51,29 +54,35 @@ export const SURVEY_KEYS = [
   { key: 'meaning', values: [5, 4, 3, 2, 1] },
 ];
 
-// Who did what. Nothing here is translated: names are names, and the roles and
-// skills are the same short English terms in either language - a Korean
-// rendering of "Project Lead" would read as a translation of a title rather
-// than as the title. The EN toggle therefore changes nothing on this card,
-// which is the honest outcome rather than an oversight.
+// Who did what. Names and role titles are not translated: a name is a name,
+// and a Korean rendering of "Project Leader" reads as a translation of a title
+// rather than as the title. The skills below it are translated, because those
+// are descriptions rather than labels.
 //
-// [name, role, skills, contact] - contact is optional.
+// [name, role, contact] - contact is optional. The skill lists are matched to
+// this one by position, which is why neither is sorted anywhere.
 export const TEAM = [
-  ['양희상', 'Project Lead',
-   ['Project Management', 'Programming', 'Control System', 'Interaction Design',
-    'Sensor Integration'],
-   { mail: 'alex3918@g.hongik.ac.kr', ig: 'hs.uy5' }],
-  ['이소울', 'Electrical',
-   ['Circuit Design', 'Power System', 'Wiring', 'Electronics',
-    'System Integration'],
-   { mail: 'viceversa2188@naver.com' }],
-  ['이원준', 'Fabrication',
-   ['Fabrication', 'Welding', 'Metalwork', 'Structural Design', 'Assembly'],
-   { mail: 'C342019@naver.com', ig: '2onejun' }],
-  ['전진', 'Sound & Component Design',
-   ['Sound Design', 'Component Design', 'Spatial Sound', 'Structure Design',
-    'Assembly'],
-   { mail: 'gpfzpf@naver.com', ig: 'jhanstin__' }],
+  ['양희상', 'Project Leader', { mail: 'alex3918@g.hongik.ac.kr', ig: 'hs.uy5' }],
+  ['이소울', 'Electrical', { mail: 'viceversa2188@naver.com' }],
+  ['이원준', 'Fabrication', { mail: 'C342019@naver.com', ig: '2onejun' }],
+  ['전진', 'Sound & Component Design', { mail: 'gpfzpf@naver.com', ig: 'jhanstin__' }],
+];
+
+const SKILLS_EN = [
+  ['Project Management', 'Programming', 'Control System', 'Interaction Design',
+   'Sensor Integration'],
+  ['Circuit Design', 'Power System', 'Wiring', 'Electronics',
+   'System Integration'],
+  ['Fabrication', 'Welding', 'Metalwork', 'Structural Design', 'Assembly'],
+  ['Sound Design', 'Component Design', 'Spatial Sound', 'Structure Design',
+   'Assembly'],
+];
+
+const SKILLS_KO = [
+  ['프로젝트 총괄', '프로그래밍', '제어 시스템', '인터랙션 디자인', '센서 연동'],
+  ['회로 설계', '전원 시스템', '배선', '전자 부품', '시스템 통합'],
+  ['제작', '용접', '금속 가공', '구조 설계', '조립'],
+  ['사운드 디자인', '부품 디자인', '공간 음향', '구조 디자인', '조립'],
 ];
 
 // The making, in order. The one-word key is the same in either language - it is
@@ -188,10 +197,8 @@ export const CONTENT = {
       },
       {
         body: [
-          'Five axes breathe inside a wall.',
-          'They never quite stop: four seconds still, then two seconds of small restless movement.',
-          'When someone comes close the restlessness grows, quickens, and begins to sound.',
-          'The sensor reads its distance to the floor. That distance is divided into bands, and each band changes the movement, the light and the sound together.',
+          'Five axes breathe inside a membrane.',
+          'Bring a hand near and the restlessness grows, quickens, begins to sound.',
         ],
         zones: true,
         colophon: COLOPHON_EN,
@@ -202,7 +209,7 @@ export const CONTENT = {
       },
       {
         body: [],
-        roles: true,
+        roles: SKILLS_EN,
       },
       {
         body: [],
@@ -269,10 +276,8 @@ export const CONTENT = {
       },
       {
         body: [
-          '다섯 개의 축이 벽 안에서 숨을 쉽니다.',
-          '아무도 없을 때에도 멈추지 않고, 4초를 가만히 있다가 2초 동안 미세하게 뒤척입니다.',
-          '누군가 다가오면 그 뒤척임이 커지고, 빨라지고, 소리를 냅니다.',
-          '센서가 바닥과의 거리를 읽습니다. 거리는 여러 구간으로 나뉘고, 구간마다 움직임, 빛, 소리가 함께 변합니다.',
+          '다섯 개의 축이 막 안에서 숨을 쉽니다.',
+          '손을 대면 그 뒤척임이 커지고, 빨라지고 소리를 냅니다.',
         ],
         zones: true,
         colophon: COLOPHON_KO,
@@ -283,7 +288,7 @@ export const CONTENT = {
       },
       {
         body: [],
-        roles: true,
+        roles: SKILLS_KO,
       },
       {
         body: [],
