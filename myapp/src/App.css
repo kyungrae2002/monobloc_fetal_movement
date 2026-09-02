@@ -200,8 +200,13 @@
 
 /* Fading out takes over from whatever was animating in - listed after those
    rules, and repeated for the grown variant, so it wins without !important. */
+/* A quarter of a second to get out. The thank-you note is the exception and
+   carries .slow: it has just lit itself line by line and a fast cut undoes it. */
+.panel.closing { --out: 250ms; }
+.panel.closing.slow { --out: 500ms; }
+
 /* Opened from nowhere - no card rect to aim at - so it can only fade. */
-.panel.closing { animation: panelOut 500ms ease both; }
+.panel.closing { animation: panelOut var(--out) ease both; }
 
 /* Opened from a card, so it goes back to one: the ground folds down to the
    rectangle it grew out of while the text leaves first. The text is cleared
@@ -209,10 +214,10 @@
    size, and watching it try is worse than not seeing it at all. */
 .panel.growing.closing { animation: none; background: none; }
 .panel.growing.closing .panel-ground {
-  animation: shrinkToCard 500ms cubic-bezier(0.5, 0, 0.75, 0.3) both;
+  animation: shrinkToCard var(--out) cubic-bezier(0.5, 0, 0.75, 0.3) both;
 }
 .panel.growing.closing > *:not(.panel-ground) {
-  animation: panelOut 180ms ease both;
+  animation: panelOut calc(var(--out) * 0.4) ease both;
 }
 
 @keyframes shrinkToCard {

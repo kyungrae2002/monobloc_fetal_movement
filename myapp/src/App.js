@@ -925,11 +925,15 @@ function Panel({ copy, keys, card, from, onClose, onLang }) {
   // grew out of. The card is still where it was: the clock stops while a panel
   // is open, so the ring has not turned underneath and the shape is waiting at
   // the coordinates the panel was handed on the way in.
+  // Quick, except on the thank-you note, which was deliberately given a slower
+  // exit: it has just finished lighting itself line by line and a fast cut
+  // undoes that. Everywhere else a close is an interruption, and waiting half a
+  // second to be let out reads as the page being slow.
   const timer = useRef(null);
   const close = () => {
     if (closing) return;
     setClosing(true);
-    timer.current = setTimeout(onClose, 500);
+    timer.current = setTimeout(onClose, sent ? 500 : 250);
   };
   useEffect(() => () => clearTimeout(timer.current), []);
 
@@ -971,7 +975,9 @@ function Panel({ copy, keys, card, from, onClose, onLang }) {
 
   return (
     <div
-      className={`panel${from ? ' growing' : ''}${closing ? ' closing' : ''}`}
+      className={`panel${from ? ' growing' : ''}${closing ? ' closing' : ''}${
+        closing && sent ? ' slow' : ''
+      }`}
       role="dialog"
       aria-modal="true"
       aria-label={keys.title}
