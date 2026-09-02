@@ -1225,23 +1225,29 @@ const POLL_MS = 20000;
 function Bars({ label, options, values, rows, field }) {
   const counts = options.map((_, i) => rows.filter((r) => r[field] === values[i]).length);
   const answered = counts.reduce((a, b) => a + b, 0);
-  // Against the most-picked option, not against the total: with five options
-  // even a clear winner takes a third of the answers, and bars drawn against
-  // the total would all be stubs.
-  const top = Math.max(1, ...counts);
 
   return (
     <section className="qres">
       <p className="mono lbl">{label}</p>
-      {options.map((opt, i) => (
-        <div key={opt} className="bar">
-          <span className="bar-name">{opt}</span>
-          <span className="bar-track">
-            <span className="bar-fill" style={{ width: `${(counts[i] / top) * 100}%` }} />
-          </span>
-          <span className="mono bar-n">{counts[i]}</span>
-        </div>
-      ))}
+      {options.map((opt, i) => {
+        // Of the people who answered this question, not of everyone: a
+        // question a third of visitors skipped would otherwise read as one
+        // nobody agreed on.
+        const pct = answered ? Math.round((counts[i] / answered) * 100) : 0;
+        return (
+          <div key={opt} className="bar">
+            <span className="bar-fill" style={{ width: `${pct}%` }} />
+            {/* Over the bar rather than beside it, and blended rather than
+                coloured: the text crosses the end of the fill, so it has to be
+                dark on the white and light on the ground, which one colour
+                cannot do. */}
+            <span className="bar-text">
+              <span className="bar-name">{opt}</span>
+              <span className="mono bar-n">{counts[i]}명 · {pct}%</span>
+            </span>
+          </div>
+        );
+      })}
       <p className="mono lbl bar-sum">{answered}명 응답</p>
     </section>
   );
