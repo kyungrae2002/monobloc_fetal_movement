@@ -710,7 +710,7 @@
 .vtrack {
   position: relative;
   flex: none;
-  width: 44px;
+  width: 52px;
   touch-action: none;          /* the drag is ours, not the page's */
   cursor: grab;
   -webkit-user-select: none;
@@ -743,12 +743,17 @@
 .vthumb {
   position: absolute;
   left: 50%;
-  width: 18px;
-  height: 18px;
+  width: 30px;
+  height: 30px;
   transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: var(--ink);
+  /* Drawn rather than filled now, so the line of the hand has to read against
+     the track it sits on: the disc it replaced could rely on its silhouette. */
+  color: var(--ink);
+  display: grid;
+  place-items: center;
   /* Long enough to be seen travelling: a tap anywhere on the track sends it
      there, and a jump would read as a redraw rather than as movement. */
   transition: top 300ms cubic-bezier(0.2, 0.7, 0.3, 1);
 }
+
+.vthumb svg { width: 26px; height: 26px; display: block; }

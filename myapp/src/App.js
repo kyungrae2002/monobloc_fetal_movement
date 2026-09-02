@@ -19,8 +19,11 @@ const CANVAS_REST = 2 / 4;
 // The zone diagram inside card 02 is a picture of the actual machine, so it
 // keeps the firmware's real idle rhythm - four seconds still, two stirring.
 // Tying it to the canvas would make the drawing lie about the piece.
-const PIECE_MS = 6000;
-const PIECE_REST = 4 / 6;
+// The chart runs faster than the piece does - a second still, a second
+// moving, against the wall's four and two. Watched on a phone for a few
+// seconds, the real timing reads as a diagram that has stopped working.
+const PIECE_MS = 2000;
+const PIECE_REST = 1 / 2;
 
 // How far right of centre the hub sits, in real centimetres. Off-axis on
 // purpose: a ring with its hub dead in the middle reads as a diagram, and the
@@ -578,6 +581,28 @@ function spokePath(hubX, cyPct, end, seed, box) {
 // inputs are still spelled differently in every engine - writing-mode in one,
 // an orient attribute in another - and the ones that do work cannot be styled
 // to sit flush against the chart.
+// An open palm, raised. The control used to be a plain dot, which said only
+// "something is here" - this says what to do with it, which matters on a chart
+// nobody is told how to use.
+function HandIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M9 11.5V5.4a1.4 1.4 0 0 1 2.8 0v5.1" />
+      <path d="M11.8 10.8V4.2a1.4 1.4 0 0 1 2.8 0v6.4" />
+      <path d="M14.6 11V5.9a1.4 1.4 0 0 1 2.8 0v7.7" />
+      <path d="M9 11.5V9.2a1.4 1.4 0 0 0-2.8 0v5.4c0 3.5 2.5 6 5.9 6h1.1a4.2 4.2 0 0 0 4.2-4.2v-2.8" />
+    </svg>
+  );
+}
+
 function ZoneTrack({ zone, setZone, max, label }) {
   const ref = useRef(null);
 
@@ -586,7 +611,7 @@ function ZoneTrack({ zone, setZone, max, label }) {
     if (!el) return;
     const r = el.getBoundingClientRect();
     const p = Math.min(1, Math.max(0, (e.clientY - r.top) / r.height));
-    setZone(Math.round(p * max));
+    setZone(Math.round((1 - p) * max));
   };
 
   return (
@@ -613,9 +638,9 @@ function ZoneTrack({ zone, setZone, max, label }) {
         if (e.currentTarget.hasPointerCapture(e.pointerId)) fromEvent(e);
       }}
       onKeyDown={(e) => {
-        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+        if (e.key === 'ArrowUp' || e.key === 'ArrowRight') {
           setZone(Math.min(max, zone + 1));
-        } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+        } else if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') {
           setZone(Math.max(0, zone - 1));
         } else {
           return;
@@ -625,9 +650,14 @@ function ZoneTrack({ zone, setZone, max, label }) {
     >
       <div className="vline" />
       {Array.from({ length: max + 1 }, (_, i) => (
-        <span key={i} className="vtick" style={{ top: `${(i / max) * 100}%` }} />
+        <span key={i} className="vtick" style={{ top: `${(1 - i / max) * 100}%` }} />
       ))}
-      <div className="vthumb" style={{ top: `${(zone / max) * 100}%` }} />
+      {/* Bottom to top, so a hand rising towards the piece is a hand rising on
+          the chart. Reaching up at a wall is the gesture the work asks for, and
+          a control that answered it by going down read as a contradiction. */}
+      <div className="vthumb" style={{ top: `${(1 - zone / max) * 100}%` }}>
+        <HandIcon />
+      </div>
     </div>
   );
 }
@@ -640,7 +670,10 @@ function Zones({ copy }) {
   const breath = (useElapsed() / PIECE_MS) % 1;
   const s = stir(breath, PIECE_REST);
 
-  const amp = zone === 0 ? 0.08 : 0.08 + (zone / last) * 0.92;
+  // Even at rest the axes take a third of their travel here. The real ones
+  // move a fraction of that, but a chart the width of a thumb has to show the
+  // thing moving before it can show it moving more.
+  const amp = 0.36 + (zone / last) * 0.64;
   // Zone 0 only moves during the stirring part of the breath, exactly as the
   // actuators do; from zone 1 on the piece runs continuously.
   const drive = zone === 0 ? s : 1;

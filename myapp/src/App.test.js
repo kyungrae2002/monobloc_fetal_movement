@@ -67,17 +67,19 @@ test('the zone track moves between zones, and stops at both ends', () => {
   fireEvent.click(cards()[1]);
   const track = screen.getByRole('slider');
 
-  fireEvent.keyDown(track, { key: 'ArrowUp' });   // already at the far end
+  // The track reads upward: the far zone is at the bottom, and a hand rises
+  // towards the piece.
+  fireEvent.keyDown(track, { key: 'ArrowDown' });   // already at the far end
   expect(track).toHaveAttribute('aria-valuenow', '0');
 
-  fireEvent.keyDown(track, { key: 'ArrowDown' });
+  fireEvent.keyDown(track, { key: 'ArrowUp' });
   expect(track).toHaveAttribute('aria-valuenow', '1');
 
   // Past the near end and held there. The piece has three zones, so the last
   // one is 2 - this reads it off the control rather than hard-coding it, so a
   // change to the zone count shows up as a real failure, not a stale number.
   const last = String(ZONE_LAMPS.length - 1);
-  for (let i = 0; i < 6; i++) fireEvent.keyDown(track, { key: 'ArrowDown' });
+  for (let i = 0; i < 6; i++) fireEvent.keyDown(track, { key: 'ArrowUp' });
   expect(track).toHaveAttribute('aria-valuenow', last);
 });
 
