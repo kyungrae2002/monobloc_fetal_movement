@@ -33,6 +33,21 @@ const PHOTOS = {
     "h": 1050,
     "src": "/process/06.jpg",
     "w": 1400
+  },
+  "caption": {
+    "h": 1400,
+    "src": "/process/caption.jpg",
+    "w": 1394
+  },
+  "entrance1": {
+    "h": 1400,
+    "src": "/process/entrance1.jpg",
+    "w": 885
+  },
+  "entrance2": {
+    "h": 1400,
+    "src": "/process/entrance2.jpg",
+    "w": 885
   }
 };
 

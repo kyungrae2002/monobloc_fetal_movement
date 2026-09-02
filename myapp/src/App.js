@@ -945,20 +945,24 @@ function Panel({ copy, keys, card, from, onClose, onLang }) {
         {!sent && <h2 className="panel-title">{keys.title}</h2>}
 
         {/* Above the address rather than below it: the card answers "where is
-            this" and a photograph of the room says that faster than a street
-            name does. Absent until the photo exists, so the card is usable in
-            the meantime. */}
-        {card.photo && PHOTOS[card.photo] && (
-          <figure className="shot lead">
-            <img
-              src={process.env.PUBLIC_URL + PHOTOS[card.photo].src}
-              width={PHOTOS[card.photo].w}
-              height={PHOTOS[card.photo].h}
-              alt={keys.title}
-              loading="lazy"
-              decoding="async"
-            />
-          </figure>
+            this", and a photograph of the doorway says that faster than a
+            street name does. Each is skipped if its file is not there, so the
+            card stays usable while the photographs are still being taken. */}
+        {card.photos && (
+          <div className="shots">
+            {card.photos.filter((k) => PHOTOS[k]).map((k) => (
+              <figure key={k} className="shot">
+                <img
+                  src={process.env.PUBLIC_URL + PHOTOS[k].src}
+                  width={PHOTOS[k].w}
+                  height={PHOTOS[k].h}
+                  alt={card.photoAlt}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </figure>
+            ))}
+          </div>
         )}
 
         {card.body.map((line, i) => (
@@ -1031,6 +1035,21 @@ function Panel({ copy, keys, card, from, onClose, onLang }) {
               {card.mapLabel}
             </a>
           </p>
+        )}
+
+        {/* The wall label, last: the card says where the piece is, and then
+            what is written beside it once you are standing there. */}
+        {card.caption && PHOTOS[card.caption] && (
+          <figure className="shot lead">
+            <img
+              src={process.env.PUBLIC_URL + PHOTOS[card.caption].src}
+              width={PHOTOS[card.caption].w}
+              height={PHOTOS[card.caption].h}
+              alt={card.captionAlt}
+              loading="lazy"
+              decoding="async"
+            />
+          </figure>
         )}
 
         {card.steps && (

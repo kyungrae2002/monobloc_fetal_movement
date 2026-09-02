@@ -186,13 +186,16 @@ export const CONTENT = {
 
     cards: [
       {
-        photo: 'location',
+        photos: ['entrance1', 'entrance2'],
+        photoAlt: 'The entrance to the exhibition space',
         body: [
           '94 Wausan-ro, Mapo-gu, Seoul',
           'Student Union Building G, 1F — THE H READING LOUNGE, stair reading room',
         ],
         map: '마포구 와우산로 94 학생회관',
         mapLabel: 'Open in maps',
+        caption: 'caption',
+        captionAlt: 'The wall label: Fetal Movement, 2026, mixed media, 200x200x250cm',
       },
       {
         body: [
@@ -265,13 +268,16 @@ export const CONTENT = {
 
     cards: [
       {
-        photo: 'location',
+        photos: ['entrance1', 'entrance2'],
+        photoAlt: '전시장 입구',
         body: [
           '서울 마포구 와우산로 94',
           '학생회관 G동 1층 THE H READING LOUNGE 계단열람실',
         ],
         map: '마포구 와우산로 94 학생회관',
         mapLabel: '지도에서 열기',
+        caption: 'caption',
+        captionAlt: '작품 캡션 — 태동, 2026, 혼합재료, 200×200×250cm',
       },
       {
         body: [

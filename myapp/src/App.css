@@ -394,6 +394,15 @@
 /* Leading a card rather than sitting inside a list, so it needs the room the
    list items give their own photographs. */
 .shot.lead { margin: 22px 0 26px; }
+
+/* A stack of photographs reads as one block, so the gap between them is
+   tighter than the space around the group. */
+.shots {
+  margin: 22px 0 26px;
+  display: grid;
+  gap: 10px;
+}
+.shots .shot { margin: 0; }
 .shot img {
   display: block;
   width: 100%;
