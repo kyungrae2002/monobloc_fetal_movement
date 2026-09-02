@@ -1042,6 +1042,18 @@ function Panel({ copy, keys, card, from, onClose, onLang }) {
           </ol>
         )}
 
+        {/* Dates below the address rather than beside it: on a phone the two
+            would each get half a column and the address would wrap to four
+            lines to make room for two short ones. */}
+        {card.when && (
+          <div className="when">
+            <p className="mono lbl">{card.whenLabel}</p>
+            {card.when.map((line) => (
+              <p key={line} className="body">{line}</p>
+            ))}
+          </div>
+        )}
+
         {card.map && (
           // A search rather than a pin: a query for the building lands right on
           // any map app without this having to carry coordinates it cannot be

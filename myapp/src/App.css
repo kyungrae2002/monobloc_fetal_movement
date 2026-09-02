@@ -395,11 +395,15 @@
    list items give their own photographs. */
 .shot.lead { margin: 22px 0 26px; }
 
-/* A stack of photographs reads as one block, so the gap between them is
-   tighter than the space around the group. */
+/* Side by side in one row rather than stacked. Two shots of the same doorway
+   are a pair to be compared, and at full width they read as two separate
+   arrivals with the second one a scroll away from the first. Both files have
+   the same proportions, so equal columns give them equal heights and their
+   labels land on one line. */
 .shots {
   margin: 22px 0 26px;
   display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
 .shots .shot { margin: 0; }
@@ -407,6 +411,10 @@
 /* Under its photograph rather than over it, and set as a micro-label: this
    names the figure, it is not a line of the card's prose. */
 .shot figcaption { margin: 6px 0 0; }
+
+.when { margin: 24px 0 0; }
+.when .lbl { margin: 0 0 7px; }
+.when .body { font-size: 16px; }
 
 /* The card's one action, so it takes the full width and a thumb's height
    rather than sitting inline with the address above it. Dotted like the
