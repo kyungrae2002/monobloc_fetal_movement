@@ -262,7 +262,7 @@ export const CONTENT = {
           options: ['매우 잘 전달되었다', '잘 전달되었다', '보통이다', '잘 전달되지 않았다', '전혀 전달되지 않았다'],
         },
       ],
-      freeLabel: '자유롭게',
+      freeLabel: '자유 응답',
       freePrompt: '느낀 점이나 기억에 남은 부분을 적어주세요.',
       placeholder: '',
       submit: '제출',

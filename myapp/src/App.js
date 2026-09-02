@@ -1326,7 +1326,7 @@ function Results() {
   return (
     <div className="results">
       <h1 className="panel-title">Feedback</h1>
-      <p className="mono lbl">전체 {rows.length}건 · {POLL_MS / 1000}초마다 갱신</p>
+      <p className="mono lbl">전체 {rows.length}건</p>
 
       {copy.survey.questions.map((q, i) => (
         <Bars
