@@ -313,7 +313,16 @@
   align-items: center;
   justify-content: flex-end;
 }
-.bar { width: 100%; background: var(--ink); transition: height 120ms linear; }
+/* Scoped: the results page has bars of its own, and an unscoped .bar meant
+   whichever rule came last in the file painted both. */
+.axes .bar {
+  width: 100%;
+  /* White rather than the page's ivory. This is the one thing on the card that
+     has to be read as a quantity, and against a near-black stage the warm ink
+     sits closer to the ground than it does to the eye. */
+  background: #fff;
+  transition: height 120ms linear;
+}
 .idx { margin-top: 8px; font-size: 9px; color: var(--ink-faint); }
 
 /* Four marks that can still be counted. The wash says how bright the room is;
@@ -620,7 +629,7 @@
 /* One full-width row per option, with the answer written across it. A short
    bar beside a separate label made the reader carry a name to a length and
    back again; here the length is behind the words it belongs to. */
-.bar {
+.results .bar {
   position: relative;
   min-height: 38px;
   margin: 0 0 6px;
@@ -697,7 +706,7 @@
     animation: panelOut 200ms ease both;
   }
   .lit { animation: none; }
-  .bar, .lamp { transition: none; }
+  .axes .bar, .lamp { transition: none; }
 }
 
 /* ---------- survey ---------- */
