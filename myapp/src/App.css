@@ -602,7 +602,10 @@
   position: relative;
   min-height: 38px;
   margin: 0 0 6px;
-  border: 1px solid var(--rule);
+  /* The unfilled part of the row is drawn, faintly, rather than left as bare
+     page: without it there is nothing to read the white against and a short
+     bar looks like a fragment instead of a small share of something. */
+  background: rgba(239, 236, 228, 0.09);
   border-radius: 3px;
   overflow: hidden;
 }
