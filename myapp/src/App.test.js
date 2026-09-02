@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import App from './App';
 import { ZONE_LAMPS } from './content';
 
@@ -16,13 +16,15 @@ test('the opening screen is the masthead and five cards, nothing else', () => {
   expect(screen.queryByRole('dialog')).toBeNull();
 });
 
-test('tapping a card opens its panel, closing returns to the canvas', () => {
+test('tapping a card opens its panel, closing returns to the canvas', async () => {
   render(<App />);
   fireEvent.click(cards()[0]);
   expect(screen.getByRole('dialog')).toHaveTextContent('Location');
 
+  // Closing folds the panel back into its card before unmounting, so the
+  // dialog outlives the click that dismissed it.
   fireEvent.click(screen.getByRole('button', { name: '닫기' }));
-  expect(screen.queryByRole('dialog')).toBeNull();
+  await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
 });
 
 test('a panel opens in Korean and switches to English, headings staying put', () => {
@@ -147,22 +149,22 @@ test('an empty form can still be sent, and the note is optional', () => {
   expect(send).toBeInTheDocument();
 });
 
-test('closing a panel returns to the canvas with the cards still there', () => {
+test('closing a panel returns to the canvas with the cards still there', async () => {
   render(<App />);
   fireEvent.click(cards()[2]);
   expect(screen.getByRole('dialog')).toHaveTextContent('Process');
 
   fireEvent.click(screen.getByRole('button', { name: '닫기' }));
-  expect(screen.queryByRole('dialog')).toBeNull();
+  await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
   expect(cards()).toHaveLength(5);
 });
 
-test('the page can scroll again after a panel has been opened and closed', () => {
+test('the page can scroll again after a panel has been opened and closed', async () => {
   render(<App />);
   fireEvent.click(cards()[4]);          // the survey: re-renders on every tap
   fireEvent.click(screen.getByRole('button', { name: '살아 있는 듯함' }));
   expect(document.body.style.overflow).toBe('hidden');
 
   fireEvent.click(screen.getByRole('button', { name: '닫기' }));
-  expect(document.body.style.overflow).toBe('');
+  await waitFor(() => expect(document.body.style.overflow).toBe(''));
 });

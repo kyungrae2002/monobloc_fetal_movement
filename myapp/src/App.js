@@ -921,12 +921,12 @@ function Panel({ copy, keys, card, from, onClose, onLang }) {
   const [sent, setSent] = useState(false);
   const [closing, setClosing] = useState(false);
 
-  // Leaving the thank-you note fades rather than cuts. Everywhere else closes
-  // at once: a delay on a panel someone is only browsing feels like lag, but
-  // here the note has just finished lighting itself and a hard cut undoes it.
+  // Every panel now leaves the way it arrived, folding back into the card it
+  // grew out of. The card is still where it was: the clock stops while a panel
+  // is open, so the ring has not turned underneath and the shape is waiting at
+  // the coordinates the panel was handed on the way in.
   const timer = useRef(null);
   const close = () => {
-    if (!sent) return onClose();
     if (closing) return;
     setClosing(true);
     timer.current = setTimeout(onClose, 500);

@@ -200,11 +200,28 @@
 
 /* Fading out takes over from whatever was animating in - listed after those
    rules, and repeated for the grown variant, so it wins without !important. */
-.panel.closing,
-.panel.growing.closing { animation: panelOut 500ms ease both; }
-.panel.growing.closing { background: var(--ground); }
-.panel.growing.closing .panel-ground,
-.panel.growing.closing > *:not(.panel-ground) { animation: none; }
+/* Opened from nowhere - no card rect to aim at - so it can only fade. */
+.panel.closing { animation: panelOut 500ms ease both; }
+
+/* Opened from a card, so it goes back to one: the ground folds down to the
+   rectangle it grew out of while the text leaves first. The text is cleared
+   early on purpose - type does not survive being scaled to a fifth of its
+   size, and watching it try is worse than not seeing it at all. */
+.panel.growing.closing { animation: none; background: none; }
+.panel.growing.closing .panel-ground {
+  animation: shrinkToCard 500ms cubic-bezier(0.5, 0, 0.75, 0.3) both;
+}
+.panel.growing.closing > *:not(.panel-ground) {
+  animation: panelOut 180ms ease both;
+}
+
+@keyframes shrinkToCard {
+  from { transform: none; opacity: 1; }
+  to {
+    transform: translate(var(--gx), var(--gy)) scale(var(--gsx), var(--gsy));
+    opacity: 0;
+  }
+}
 
 @keyframes panelOut {
   from { opacity: 1; }
@@ -665,9 +682,15 @@
    clocks are already halted in JS, and this keeps the rest in step. */
 @media (prefers-reduced-motion: reduce) {
   .panel { animation: none; }
-  .panel.growing { background: var(--ground); }
+  .panel.growing,
+  .panel.growing.closing { background: var(--ground); }
   .panel.growing .panel-ground,
+  .panel.growing.closing .panel-ground,
   .panel.growing > *:not(.panel-ground) { animation: none; }
+  .panel.closing,
+  .panel.growing.closing > *:not(.panel-ground) {
+    animation: panelOut 200ms ease both;
+  }
   .lit { animation: none; }
   .bar, .lamp { transition: none; }
 }
