@@ -29,7 +29,7 @@ QUALITY = 78          # visibly clean at this size; ~250KB a photo
 # a visitor has not asked for yet - they load before anything is tapped - so
 # they get their own small copy rather than the full-size file scaled down in
 # the browser. 320px covers a 3x screen at that size.
-THUMB_KEYS = {'entrance1', '04'}
+THUMB_KEYS = {'04'}
 THUMB_EDGE = 320
 THUMB_QUALITY = 72
 

@@ -43,7 +43,6 @@ const PHOTOS = {
   "entrance1": {
     "h": 1400,
     "src": "/process/entrance1.jpg",
-    "thumb": "/process/entrance1-t.jpg",
     "w": 885
   },
   "entrance2": {
