@@ -433,88 +433,51 @@ function Canvas({ ms, s, turns, held, onHold, onOpen }) {
             }}
           >
             <svg
-              className={`blob${card.preview ? ' previewed' : ''}`}
+              className="blob"
               viewBox={`0 0 ${VB_W} ${VB_H}`}
               preserveAspectRatio="none"
               aria-hidden="true"
             >
-              {/* Under the outline, not over it: the path is drawn after this
-                  with a translucent fill, which both tints the preview back
-                  and leaves the stroke crisp on top. Clipping the preview over
-                  a finished shape instead would have covered the inner half of
-                  that stroke and thinned it by half. */}
-              {card.preview && (
-                <>
-                  <defs>
-                    <clipPath id={`in-${card.id}`}>
-                      <path d={d} />
-                    </clipPath>
-                  </defs>
-                  <g clipPath={`url(#in-${card.id})`} opacity={0.62 + s * 0.38}>
-                    {card.preview.photo && PHOTOS[card.preview.photo] && (
-                      <image
-                        href={
-                          process.env.PUBLIC_URL +
-                          (PHOTOS[card.preview.photo].thumb ||
-                            PHOTOS[card.preview.photo].src)
-                        }
-                        x="0"
-                        y="0"
-                        width={VB_W}
-                        height={VB_H}
-                        preserveAspectRatio="xMidYMid slice"
-                      />
-                    )}
-                    {card.preview.lines &&
-                      card.preview.lines.map((line, k) => (
-                        <text
-                          key={line}
-                          className="ptext"
-                          x={VB_W / 2}
-                          y={
-                            VB_H / 2 -
-                            ((card.preview.lines.length - 1) * 11) / 2 +
-                            k * 11 +
-                            3
-                          }
-                          textAnchor="middle"
-                        >
-                          {line}
-                        </text>
-                      ))}
-                  </g>
-                </>
-              )}
               <path
                 d={d}
                 filter="url(#rough)"
                 vectorEffect="non-scaling-stroke"
                 stroke={s > 0.01 ? `rgba(239,236,228,${0.3 + s * 0.6})` : 'var(--ink-faint)'}
               />
+              {/* The name sits inside the shape rather than under it. Drawn
+                  after the path so it is never dimmed by the fill, and given
+                  its glow with a drop-shadow because an SVG text node has no
+                  text-shadow of its own.
+
+                  Every name lights, and none of them drop far: on a dark ground
+                  a resting label at a dim value is barely legible, so the floor
+                  is high and the pulse rides above it. A finger on the card puts
+                  it straight to full, which is the only immediate answer the
+                  canvas gives to a touch. The feedback card sits highest,
+                  because it is the one asking for something. */}
+              <text
+                className="cardname"
+                x={VB_W / 2}
+                y={VB_H / 2 + 3.6}
+                textAnchor="middle"
+                style={{
+                  fill: `rgba(239,236,228,${
+                    pressed === i
+                      ? 1
+                      : (card.lit ? 0.86 : 0.78) + s * (card.lit ? 0.14 : 0.22)
+                  })`,
+                  filter: `drop-shadow(0 0 ${
+                    pressed === i ? 5 : 2 + s * (card.lit ? 3.5 : 2.8)
+                  }px rgba(239,236,228,${
+                    pressed === i
+                      ? 0.75
+                      : (card.lit ? 0.3 : 0.24) + s * (card.lit ? 0.5 : 0.36)
+                  }))`,
+                }}
+              >
+                {card.tag.toUpperCase()}
+              </text>
             </svg>
-            {/* Every label lights, and none of them drop far: on a dark ground
-                a resting label at a dim value is barely legible, so the floor
-                is high and the pulse rides above it. A finger on the card puts
-                it straight to full, which is the only immediate answer the
-                canvas gives to a touch. The feedback card still sits highest,
-                because it is the one asking for something. */}
-            <span
-              className="mono tag"
-              style={{
-                color: `rgba(239,236,228,${
-                  pressed === i ? 1 : (card.lit ? 0.86 : 0.78) + s * (card.lit ? 0.14 : 0.22)
-                })`,
-                textShadow: `0 0 ${
-                  pressed === i ? 18 : 8 + s * (card.lit ? 14 : 11)
-                }px rgba(239,236,228,${
-                  pressed === i
-                    ? 0.7
-                    : (card.lit ? 0.3 : 0.24) + s * (card.lit ? 0.5 : 0.36)
-                })`,
-              }}
-            >
-              {card.tag}
-            </span>
           </button>
         );
       })}

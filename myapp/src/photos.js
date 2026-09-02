@@ -22,7 +22,6 @@ const PHOTOS = {
   "04": {
     "h": 1400,
     "src": "/process/04.jpg",
-    "thumb": "/process/04-t.jpg",
     "w": 1050
   },
   "05": {

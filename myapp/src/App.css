@@ -150,17 +150,6 @@
 }
 /* Heavier than a border but not at full strength: weight and looseness together
    are what make it read as a pencil line rather than a bolder outline. */
-/* A scrim rather than a solid ground where there is something behind it: the
-   preview has to read as a hint under the surface, not as a photograph pasted
-   into a frame. */
-.blob.previewed path { fill: rgba(12, 11, 9, 0.52); }
-
-.ptext {
-  font-family: var(--mono);
-  font-size: 8px;
-  fill: rgba(239, 236, 228, 0.88);
-}
-
 .blob path {
   fill: color-mix(in srgb, var(--ground) 62%, #000);
   stroke-width: 1.9;
@@ -172,15 +161,6 @@
 .card:active .blob path { stroke: var(--ink); }
 .send:active { opacity: 0.75; }
 .opt:active { border-color: var(--ink); }
-
-.tag {
-  position: absolute;
-  left: 0;
-  bottom: -18px;
-  font-size: 12px;
-  white-space: nowrap;
-  color: var(--ink-faint);
-}
 
 /* ---------- detail panel ---------- */
 .panel {
@@ -553,6 +533,15 @@
   word-break: break-word;
 }
 .contact a:active { color: var(--ink); border-color: var(--ink); }
+
+/* The name inside a shape. In viewBox units, so it scales with the shape the
+   way the outline does - a card that drifts back stays proportionate instead
+   of keeping a fixed label glued to it. */
+.cardname {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.09em;
+}
 
 /* Sized against the type rather than fixed, so the mark keeps its proportion to
    the address next to it if the label size is ever changed. */

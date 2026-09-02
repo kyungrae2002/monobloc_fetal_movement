@@ -24,14 +24,6 @@ from PIL import Image, ImageOps
 LONG_EDGE = 1400      # covers a full-width photo on a 3x phone screen
 QUALITY = 78          # visibly clean at this size; ~250KB a photo
 
-# A few photographs are also shown inside the drifting shapes on the opening
-# screen, at about 120 CSS pixels across. Those are the only images on the page
-# a visitor has not asked for yet - they load before anything is tapped - so
-# they get their own small copy rather than the full-size file scaled down in
-# the browser. 320px covers a 3x screen at that size.
-THUMB_KEYS = {'04'}
-THUMB_EDGE = 320
-THUMB_QUALITY = 72
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 APP = os.path.dirname(HERE)
@@ -70,15 +62,6 @@ for name in sorted(os.listdir(SRC)):
             'JPEG', quality=QUALITY, optimize=True, progressive=True,
         )
         photos[key] = {'src': '/process/%s.jpg' % key, 'w': im.width, 'h': im.height}
-
-        if key in THUMB_KEYS:
-            t = im.copy()
-            t.thumbnail((THUMB_EDGE, THUMB_EDGE), Image.LANCZOS)
-            t.convert('RGB').save(
-                os.path.join(OUT, key + '-t.jpg'),
-                'JPEG', quality=THUMB_QUALITY, optimize=True,
-            )
-            photos[key]['thumb'] = '/process/%s-t.jpg' % key
 
     kb = os.path.getsize(os.path.join(OUT, key + '.jpg')) / 1024
     print('%s  %sx%s  %.0fKB' % (key, im.width, im.height, kb))

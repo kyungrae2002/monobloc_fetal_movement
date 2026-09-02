@@ -40,26 +40,14 @@ export const ENTRANCE = [
 // called PROCESS on the drifting canvas, and translating the heading inside
 // would leave the visitor looking at a panel that appears to be a different
 // card from the one they tapped. Only the prose below it changes language.
-// preview is what shows inside the drifting shape before anything is opened -
-// either a photograph or a few lines of text, chosen per card rather than by
-// what happens to be available. Not translated, and not there to be read at
-// that size: it is the texture of the card, enough to say the shape holds
-// something. Lines are broken by hand because the shape is about a hundred
-// pixels across and nothing would wrap well on its own.
 export const CARD_KEYS = [
-  { id: '01', tag: 'location', title: 'Location',
-    preview: { lines: ['H라운지', '계단열람실'] } },
-  { id: '02', tag: 'work', title: 'Work',
-    preview: { lines: ['작동', '메커니즘'] } },
-  { id: '03', tag: 'process', title: 'Process', preview: { photo: '04' } },
-  { id: '04', tag: 'team', title: 'Team',
-    preview: { lines: ['양희상', '이소울', '이원준', '전진'] } },
-  // lit: the only card that asks the visitor for something back, so its label
+  { id: '01', tag: 'location', title: 'Location' },
+  { id: '02', tag: 'work', title: 'Work' },
+  { id: '03', tag: 'process', title: 'Process' },
+  { id: '04', tag: 'team', title: 'Team' },
+  // lit: the only card that asks the visitor for something back, so its name
   // glows with the masthead instead of sitting quiet like the other four.
-  { id: '05', tag: 'feedback', title: 'Feedback', lit: true,
-    preview: {
-      lines: ['느낀 점이나', '기억에 남은', '부분을', '적어주세요'],
-    } },
+  { id: '05', tag: 'feedback', title: 'Feedback', lit: true },
 ];
 
 // What actually gets stored. The labels below are translated; these are not.
