@@ -4,7 +4,7 @@ import {
   ZONE_LAMPS,
 } from './content';
 import PHOTOS from './photos';
-import { sendFeedback, configured } from './survey';
+import { sendFeedback, fetchFeedback, configured } from './survey';
 import logo from './logo.png';
 import './App.css';
 
@@ -1208,7 +1208,160 @@ function Panel({ copy, keys, card, from, onClose, onLang }) {
 
 /* ---------- page ---------- */
 
+/* ---------- results, for the team ---------- */
+
+// Reached at #results rather than /results: a path would need the host to
+// serve index.html for an address that is not a file, and a hash needs nothing
+// from anyone. The page is not linked from the site - it is a URL the team is
+// given - but it is not hidden either, which is why the answers behind it are
+// held by a password rather than by nobody knowing where to look.
+const RESULTS_HASH = '#results';
+const TOKEN_KEY = 'monobloc.results.token';
+
+// Long enough to be live for someone watching the show, rare enough that a
+// phone left open on the desk all day is not making a request a second.
+const POLL_MS = 20000;
+
+function Bars({ label, options, values, rows, field }) {
+  const counts = options.map((_, i) => rows.filter((r) => r[field] === values[i]).length);
+  const answered = counts.reduce((a, b) => a + b, 0);
+  // Against the most-picked option, not against the total: with five options
+  // even a clear winner takes a third of the answers, and bars drawn against
+  // the total would all be stubs.
+  const top = Math.max(1, ...counts);
+
+  return (
+    <section className="qres">
+      <p className="mono lbl">{label}</p>
+      {options.map((opt, i) => (
+        <div key={opt} className="bar">
+          <span className="bar-name">{opt}</span>
+          <span className="bar-track">
+            <span className="bar-fill" style={{ width: `${(counts[i] / top) * 100}%` }} />
+          </span>
+          <span className="mono bar-n">{counts[i]}</span>
+        </div>
+      ))}
+      <p className="mono lbl bar-sum">{answered}명 응답</p>
+    </section>
+  );
+}
+
+function Results() {
+  const [token, setToken] = useState('');
+  const [rows, setRows] = useState(null);
+  const [state, setState] = useState('start');   // start | loading | ok | denied | error
+  const copy = CONTENT.ko;
+
+  // Remembered per device so the password is typed once. A wrong one is never
+  // stored, so a mistake does not lock the page into failing every reload.
+  useEffect(() => {
+    let saved = '';
+    try { saved = window.localStorage.getItem(TOKEN_KEY) || ''; } catch (e) { /* private mode */ }
+    if (saved) { setToken(saved); load(saved); }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const load = async (tk) => {
+    setState((s) => (s === 'ok' ? 'ok' : 'loading'));
+    try {
+      const data = await fetchFeedback(tk);
+      setRows(data);
+      setState('ok');
+      try { window.localStorage.setItem(TOKEN_KEY, tk); } catch (e) { /* private mode */ }
+    } catch (err) {
+      if (err.denied) {
+        setState('denied');
+        try { window.localStorage.removeItem(TOKEN_KEY); } catch (e) { /* private mode */ }
+      } else {
+        console.error(err);
+        setState('error');
+      }
+    }
+  };
+
+  // Only once something is showing: polling a password prompt would just be
+  // guessing at the door every twenty seconds.
+  useEffect(() => {
+    if (state !== 'ok' || !token) return undefined;
+    const id = setInterval(() => load(token), POLL_MS);
+    return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state, token]);
+
+  if (state !== 'ok') {
+    return (
+      <div className="results gate">
+        <h1 className="panel-title">Feedback</h1>
+        <form
+          onSubmit={(e) => { e.preventDefault(); if (token.trim()) load(token.trim()); }}
+        >
+          <input
+            className="note pw"
+            type="password"
+            value={token}
+            onChange={(e) => setToken(e.target.value)}
+            placeholder="비밀번호"
+            aria-label="비밀번호"
+            autoFocus
+          />
+          <button className="send" type="submit" aria-label="열기">
+            {state === 'loading' ? SHARED.sendingMark : SHARED.submitMark}
+          </button>
+        </form>
+        {state === 'denied' && <p className="mono lbl warn">비밀번호가 맞지 않습니다.</p>}
+        {state === 'error' && <p className="mono lbl warn">불러오지 못했습니다. 다시 시도해주세요.</p>}
+      </div>
+    );
+  }
+
+  const notes = rows.filter((r) => r.note && String(r.note).trim());
+
+  return (
+    <div className="results">
+      <h1 className="panel-title">Feedback</h1>
+      <p className="mono lbl">전체 {rows.length}건 · {POLL_MS / 1000}초마다 갱신</p>
+
+      {copy.survey.questions.map((q, i) => (
+        <Bars
+          key={SURVEY_KEYS[i].key}
+          label={q.label}
+          options={q.options}
+          values={SURVEY_KEYS[i].values}
+          rows={rows}
+          field={SURVEY_KEYS[i].key}
+        />
+      ))}
+
+      <section className="qres">
+        <p className="mono lbl">{copy.survey.freeLabel} · {notes.length}건</p>
+        {notes.length === 0 && <p className="body dim">아직 없습니다.</p>}
+        {notes.map((r, i) => (
+          <blockquote key={r.id || i} className="note-row">
+            <p className="body">{r.note}</p>
+            {r.created_at && (
+              <p className="mono lbl">
+                {new Date(r.created_at).toLocaleString('ko-KR', {
+                  month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit',
+                })}
+              </p>
+            )}
+          </blockquote>
+        ))}
+      </section>
+    </div>
+  );
+}
+
 export default function App() {
+  // The results page is a different page in every way that matters - no canvas,
+  // no clock, no panels - so it takes over before any of that is set up rather
+  // than being layered on top of it.
+  if (window.location.hash === RESULTS_HASH) return <Results />;
+  return <Piece />;
+}
+
+function Piece() {
   const [open, setOpen] = useState(null);   // { idx, rect }
   const [lang, setLang] = useState('ko');
   const [held, setHeld] = useState(false);
