@@ -48,7 +48,7 @@ export const ENTRANCE = [
 // pixels across and nothing would wrap well on its own.
 export const CARD_KEYS = [
   { id: '01', tag: 'location', title: 'Location',
-    preview: { lines: ['H라운지 B1', '계단열람실'] } },
+    preview: { lines: ['H라운지', '계단열람실'] } },
   { id: '02', tag: 'work', title: 'Work',
     preview: { lines: ['작동', '메커니즘'] } },
   { id: '03', tag: 'process', title: 'Process', preview: { photo: '04' } },
@@ -211,7 +211,7 @@ export const CONTENT = {
         photoAlt: 'The entrance to the exhibition space',
         body: [
           '94 Wausan-ro, Mapo-gu, Seoul',
-          'Student Union Building G, 1F — THE H READING LOUNGE, stair reading room',
+          'Student Union Building G — THE H READING LOUNGE, stair reading room',
         ],
         whenLabel: 'Exhibition period',
         when: ['2 – 9 September 2026', '09:50 – 18:00'],
@@ -295,7 +295,7 @@ export const CONTENT = {
         photoAlt: '전시장 입구',
         body: [
           '서울 마포구 와우산로 94',
-          '학생회관 G동 1층 THE H READING LOUNGE 계단열람실',
+          '학생회관 G동 THE H READING LOUNGE 계단열람실',
         ],
         whenLabel: '전시 기간',
         when: ['2026년 9월 2일 – 9월 9일', '09:50 – 18:00'],
