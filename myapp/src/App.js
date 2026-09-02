@@ -1216,7 +1216,6 @@ function Panel({ copy, keys, card, from, onClose, onLang }) {
 // given - but it is not hidden either, which is why the answers behind it are
 // held by a password rather than by nobody knowing where to look.
 const RESULTS_HASH = '#results';
-const TOKEN_KEY = 'monobloc.results.token';
 
 // Long enough to be live for someone watching the show, rare enough that a
 // phone left open on the desk all day is not making a request a second.
@@ -1259,26 +1258,19 @@ function Results() {
   const [state, setState] = useState('start');   // start | loading | ok | denied | error
   const copy = CONTENT.ko;
 
-  // Remembered per device so the password is typed once. A wrong one is never
-  // stored, so a mistake does not lock the page into failing every reload.
-  useEffect(() => {
-    let saved = '';
-    try { saved = window.localStorage.getItem(TOKEN_KEY) || ''; } catch (e) { /* private mode */ }
-    if (saved) { setToken(saved); load(saved); }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
+  // Not remembered. Asked for every time the page is opened, because a phone
+  // that opens straight into the answers is a phone anyone who picks it up can
+  // read them from - and these are phones that spend the day on a desk beside
+  // the piece. The page stays open once unlocked; closing it locks it again.
   const load = async (tk) => {
     setState((s) => (s === 'ok' ? 'ok' : 'loading'));
     try {
       const data = await fetchFeedback(tk);
       setRows(data);
       setState('ok');
-      try { window.localStorage.setItem(TOKEN_KEY, tk); } catch (e) { /* private mode */ }
     } catch (err) {
       if (err.denied) {
         setState('denied');
-        try { window.localStorage.removeItem(TOKEN_KEY); } catch (e) { /* private mode */ }
       } else {
         console.error(err);
         setState('error');
