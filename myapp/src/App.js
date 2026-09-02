@@ -807,6 +807,24 @@ function Survey({ copy, onSent }) {
 //
 // aria-hidden throughout: the address beside each one is already the link's
 // accessible name, and "postbox" announced in front of it is only noise.
+function PinIcon() {
+  return (
+    <svg
+      className="picon"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M12 21.5s7-6.1 7-11.2A7 7 0 0 0 5 10.3c0 5.1 7 11.2 7 11.2Z" />
+      <circle cx="12" cy="10.1" r="2.6" />
+    </svg>
+  );
+}
+
 function MailIcon() {
   return (
     <svg className="cicon" viewBox="0 0 24 24" aria-hidden="true">
@@ -1028,15 +1046,20 @@ function Panel({ copy, keys, card, from, onClose, onLang }) {
           // A search rather than a pin: a query for the building lands right on
           // any map app without this having to carry coordinates it cannot be
           // checked against.
-          <p className="contact mono">
-            <a
-              href={`https://map.naver.com/p/search/${encodeURIComponent(card.map)}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {card.mapLabel}
-            </a>
-          </p>
+          //
+          // Given the width of the card because it is the one thing this card
+          // asks anyone to do. As a chip it sat among the addresses looking
+          // like a footnote to them rather than the way out of the page.
+          <a
+            className="maplink"
+            href={`https://map.naver.com/p/search/${encodeURIComponent(card.map)}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <PinIcon />
+            <span className="mono">{card.mapLabel}</span>
+            <span className="mono away" aria-hidden="true">↗</span>
+          </a>
         )}
 
         {/* Its own section below a rule rather than one more photograph in the

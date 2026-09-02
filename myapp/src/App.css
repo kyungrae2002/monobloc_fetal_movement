@@ -408,6 +408,34 @@
    names the figure, it is not a line of the card's prose. */
 .shot figcaption { margin: 6px 0 0; }
 
+/* The card's one action, so it takes the full width and a thumb's height
+   rather than sitting inline with the address above it. Dotted like the
+   contact chips: on this page a dotted outline is what marks the things that
+   actually go somewhere. */
+.maplink {
+  margin: 22px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-height: 54px;
+  padding: 0 16px;
+  border: 1px dotted var(--ink-faint);
+  border-radius: 4px;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.maplink .mono { font-size: 12px; text-transform: none; letter-spacing: 0.02em; }
+/* Pushed to the far edge: the arrow says this leaves the page, and it belongs
+   at the end of the row rather than trailing the words. */
+.maplink .away { margin-left: auto; color: var(--ink-faint); font-size: 14px; }
+.maplink:active {
+  border-color: var(--ink);
+  background: rgba(239, 236, 228, 0.07);
+}
+
+.picon { width: 19px; height: 19px; flex: none; display: block; }
+
 /* The rule is what separates the two halves of the location card. Generous
    space above it, so it reads as the end of one thing rather than a line
    drawn through the middle of another. */
