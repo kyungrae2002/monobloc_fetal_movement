@@ -565,9 +565,32 @@
 
 .results .panel-title { font-size: 22px; margin-bottom: 10px; }
 
-.gate form { display: flex; gap: 10px; align-items: center; margin: 22px 0 0; }
-.pw { flex: 1; min-height: 48px; padding: 12px 14px; }
-.gate .send { flex: none; }
+/* Stacked, not side by side: on a phone the two shared a row and the field
+   ended up the width of the word it was asking for. */
+.gate form { display: grid; gap: 12px; margin: 24px 0 0; }
+
+.pw {
+  width: 100%;
+  min-height: 60px;
+  padding: 14px 16px;
+  /* Large enough to read back what was typed, and at 17px or more iOS does not
+     zoom the whole page in when the field takes focus. */
+  font-size: 20px;
+  letter-spacing: 0.06em;
+  font-family: var(--mono);
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+}
+.pw:focus { outline: none; border-color: var(--ink-faint); }
+.pw::placeholder { color: var(--ink-faint); letter-spacing: 0.02em; }
+
+.pw-go {
+  width: 100%;
+  min-height: 54px;
+  font-size: 15px;
+}
 
 .qres { margin: 34px 0 0; }
 .qres > .lbl { margin: 0 0 12px; }

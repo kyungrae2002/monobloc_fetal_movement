@@ -1293,20 +1293,28 @@ function Results() {
     return (
       <div className="results gate">
         <h1 className="panel-title">Feedback</h1>
+        <p className="body dim">팀원용 페이지입니다.</p>
         <form
           onSubmit={(e) => { e.preventDefault(); if (token.trim()) load(token.trim()); }}
         >
+          {/* Shown rather than masked. This is a password shared in a group
+              chat, not a personal credential: hiding it stops nobody, and it
+              did stop the person typing from seeing what they had typed. */}
           <input
-            className="note pw"
-            type="password"
+            className="pw"
+            type="text"
             value={token}
             onChange={(e) => setToken(e.target.value)}
             placeholder="비밀번호"
             aria-label="비밀번호"
+            autoComplete="off"
+            autoCapitalize="off"
+            autoCorrect="off"
+            spellCheck="false"
             autoFocus
           />
-          <button className="send" type="submit" aria-label="열기">
-            {state === 'loading' ? SHARED.sendingMark : SHARED.submitMark}
+          <button className="send pw-go" type="submit">
+            {state === 'loading' ? '여는 중' : '열기'}
           </button>
         </form>
         {state === 'denied' && <p className="mono lbl warn">비밀번호가 맞지 않습니다.</p>}
