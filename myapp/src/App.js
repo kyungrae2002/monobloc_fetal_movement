@@ -429,11 +429,58 @@ function Canvas({ ms, s, turns, held, onHold, onOpen }) {
             }}
           >
             <svg
-              className="blob"
+              className={`blob${card.preview ? ' previewed' : ''}`}
               viewBox={`0 0 ${VB_W} ${VB_H}`}
               preserveAspectRatio="none"
               aria-hidden="true"
             >
+              {/* Under the outline, not over it: the path is drawn after this
+                  with a translucent fill, which both tints the preview back
+                  and leaves the stroke crisp on top. Clipping the preview over
+                  a finished shape instead would have covered the inner half of
+                  that stroke and thinned it by half. */}
+              {card.preview && (
+                <>
+                  <defs>
+                    <clipPath id={`in-${card.id}`}>
+                      <path d={d} />
+                    </clipPath>
+                  </defs>
+                  <g clipPath={`url(#in-${card.id})`} opacity={0.62 + s * 0.38}>
+                    {card.preview.photo && PHOTOS[card.preview.photo] && (
+                      <image
+                        href={
+                          process.env.PUBLIC_URL +
+                          (PHOTOS[card.preview.photo].thumb ||
+                            PHOTOS[card.preview.photo].src)
+                        }
+                        x="0"
+                        y="0"
+                        width={VB_W}
+                        height={VB_H}
+                        preserveAspectRatio="xMidYMid slice"
+                      />
+                    )}
+                    {card.preview.lines &&
+                      card.preview.lines.map((line, k) => (
+                        <text
+                          key={line}
+                          className="ptext"
+                          x={VB_W / 2}
+                          y={
+                            VB_H / 2 -
+                            ((card.preview.lines.length - 1) * 11) / 2 +
+                            k * 11 +
+                            3
+                          }
+                          textAnchor="middle"
+                        >
+                          {line}
+                        </text>
+                      ))}
+                  </g>
+                </>
+              )}
               <path
                 d={d}
                 filter="url(#rough)"
