@@ -280,6 +280,10 @@ function useTick(ms, active) {
 /* ---------- opening screen ---------- */
 
 function Canvas({ ms, s, turns, held, onHold, onOpen }) {
+  // Which card is under a finger, so its label can answer the touch. The glow
+  // is written inline frame by frame, so a :active rule in the stylesheet
+  // would lose to it - the state has to be here.
+  const [pressed, setPressed] = useState(-1);
   const canvasRef = useRef(null);
   const box = useBox(canvasRef);
 
@@ -319,9 +323,9 @@ function Canvas({ ms, s, turns, held, onHold, onOpen }) {
       // stop this from firing themselves - pressing one is how you open it, and
       // it should not also wind the ring up.
       onPointerDown={() => onHold(true)}
-      onPointerUp={() => onHold(false)}
-      onPointerLeave={() => onHold(false)}
-      onPointerCancel={() => onHold(false)}
+      onPointerUp={() => { onHold(false); setPressed(-1); }}
+      onPointerLeave={() => { onHold(false); setPressed(-1); }}
+      onPointerCancel={() => { onHold(false); setPressed(-1); }}
     >
       {/* The spokes sit under every card - the lowest card z-index is 4 - so a
           line disappears the moment it reaches a shape, from either side. */}
@@ -410,7 +414,7 @@ function Canvas({ ms, s, turns, held, onHold, onOpen }) {
           <button
             key={card.id}
             className="card"
-            onPointerDown={(e) => e.stopPropagation()}
+            onPointerDown={(e) => { e.stopPropagation(); setPressed(i); }}
             // The rect goes with the index so the panel can start life exactly
             // where the card was, rather than appearing from nowhere.
             onClick={(e) => onOpen(i, e.currentTarget.getBoundingClientRect())}
@@ -488,17 +492,24 @@ function Canvas({ ms, s, turns, held, onHold, onOpen }) {
                 stroke={s > 0.01 ? `rgba(239,236,228,${0.3 + s * 0.6})` : 'var(--ink-faint)'}
               />
             </svg>
-            {/* Every label now lights, and none of them drop far: on a dark
-                ground a resting label at the old dim value was barely legible,
-                so the floor is high and the pulse rides above it. The feedback
-                card still lifts furthest, because it is the one asking for
-                something. */}
+            {/* Every label lights, and none of them drop far: on a dark ground
+                a resting label at a dim value is barely legible, so the floor
+                is high and the pulse rides above it. A finger on the card puts
+                it straight to full, which is the only immediate answer the
+                canvas gives to a touch. The feedback card still sits highest,
+                because it is the one asking for something. */}
             <span
               className="mono tag"
               style={{
-                color: `rgba(239,236,228,${(card.lit ? 0.72 : 0.6) + s * (card.lit ? 0.28 : 0.24)})`,
-                textShadow: `0 0 ${6 + s * (card.lit ? 14 : 10)}px rgba(239,236,228,${
-                  (card.lit ? 0.22 : 0.16) + s * (card.lit ? 0.5 : 0.34)
+                color: `rgba(239,236,228,${
+                  pressed === i ? 1 : (card.lit ? 0.86 : 0.78) + s * (card.lit ? 0.14 : 0.22)
+                })`,
+                textShadow: `0 0 ${
+                  pressed === i ? 18 : 8 + s * (card.lit ? 14 : 11)
+                }px rgba(239,236,228,${
+                  pressed === i
+                    ? 0.7
+                    : (card.lit ? 0.3 : 0.24) + s * (card.lit ? 0.5 : 0.36)
                 })`,
               }}
             >
