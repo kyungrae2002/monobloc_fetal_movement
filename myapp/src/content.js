@@ -18,7 +18,19 @@ export const SHARED = {
   // trying to pronounce a tick.
   submitMark: '✓',
   sendingMark: '· · ·',
+
+  // A heading, so it is not translated - the same reasoning as the card titles
+  // above. It names the second half of the location card, below the rule.
+  captionHeading: 'Caption',
 };
+
+// The two entrance photographs and what to call them. Not translated: these are
+// figure numbers, and they are the same mark in either language. Kept out of
+// the translations so the two cannot end up listing different photographs.
+export const ENTRANCE = [
+  ['entrance1', 'entrance #1'],
+  ['entrance2', 'entrance #2'],
+];
 
 // Identity of each card, defined once. The two translations below are indexed
 // against this list, so a card cannot end up with a different number or label
@@ -29,10 +41,7 @@ export const SHARED = {
 // would leave the visitor looking at a panel that appears to be a different
 // card from the one they tapped. Only the prose below it changes language.
 export const CARD_KEYS = [
-  // The drifting label stays short while the panel heading carries the full
-  // name: the label is positioned below its card and never wrapped, so a long
-  // one runs off the screen edge when the card drifts right.
-  { id: '01', tag: 'location', title: 'Location & Caption' },
+  { id: '01', tag: 'location', title: 'Location' },
   { id: '02', tag: 'work', title: 'Work' },
   { id: '03', tag: 'process', title: 'Process' },
   { id: '04', tag: 'team', title: 'Team' },
@@ -186,7 +195,7 @@ export const CONTENT = {
 
     cards: [
       {
-        photos: ['entrance1', 'entrance2'],
+        photos: true,
         photoAlt: 'The entrance to the exhibition space',
         body: [
           '94 Wausan-ro, Mapo-gu, Seoul',
@@ -268,7 +277,7 @@ export const CONTENT = {
 
     cards: [
       {
-        photos: ['entrance1', 'entrance2'],
+        photos: true,
         photoAlt: '전시장 입구',
         body: [
           '서울 마포구 와우산로 94',

@@ -403,6 +403,20 @@
   gap: 10px;
 }
 .shots .shot { margin: 0; }
+
+/* Under its photograph rather than over it, and set as a micro-label: this
+   names the figure, it is not a line of the card's prose. */
+.shot figcaption { margin: 6px 0 0; }
+
+/* The rule is what separates the two halves of the location card. Generous
+   space above it, so it reads as the end of one thing rather than a line
+   drawn through the middle of another. */
+.sect {
+  margin-top: 34px;
+  padding-top: 28px;
+  border-top: 1px solid var(--rule);
+}
+.sect .shot { margin: 0; }
 .shot img {
   display: block;
   width: 100%;

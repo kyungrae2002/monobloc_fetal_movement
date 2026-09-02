@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-  CONTENT, SHARED, CARD_KEYS, STEP_KEYS, SURVEY_KEYS, TEAM, ZONE_LAMPS,
+  CONTENT, SHARED, CARD_KEYS, ENTRANCE, STEP_KEYS, SURVEY_KEYS, TEAM,
+  ZONE_LAMPS,
 } from './content';
 import PHOTOS from './photos';
 import { sendFeedback, configured } from './survey';
@@ -950,7 +951,7 @@ function Panel({ copy, keys, card, from, onClose, onLang }) {
             card stays usable while the photographs are still being taken. */}
         {card.photos && (
           <div className="shots">
-            {card.photos.filter((k) => PHOTOS[k]).map((k) => (
+            {ENTRANCE.filter(([k]) => PHOTOS[k]).map(([k, label]) => (
               <figure key={k} className="shot">
                 <img
                   src={process.env.PUBLIC_URL + PHOTOS[k].src}
@@ -960,6 +961,7 @@ function Panel({ copy, keys, card, from, onClose, onLang }) {
                   loading="lazy"
                   decoding="async"
                 />
+                <figcaption className="mono lbl">{label}</figcaption>
               </figure>
             ))}
           </div>
@@ -1037,19 +1039,24 @@ function Panel({ copy, keys, card, from, onClose, onLang }) {
           </p>
         )}
 
-        {/* The wall label, last: the card says where the piece is, and then
-            what is written beside it once you are standing there. */}
+        {/* Its own section below a rule rather than one more photograph in the
+            run: the card holds two different things - where the piece is, and
+            what is written beside it once you are standing there - and without
+            the break they read as one list. */}
         {card.caption && PHOTOS[card.caption] && (
-          <figure className="shot lead">
-            <img
-              src={process.env.PUBLIC_URL + PHOTOS[card.caption].src}
-              width={PHOTOS[card.caption].w}
-              height={PHOTOS[card.caption].h}
-              alt={card.captionAlt}
-              loading="lazy"
-              decoding="async"
-            />
-          </figure>
+          <section className="sect">
+            <h3 className="panel-title">{SHARED.captionHeading}</h3>
+            <figure className="shot">
+              <img
+                src={process.env.PUBLIC_URL + PHOTOS[card.caption].src}
+                width={PHOTOS[card.caption].w}
+                height={PHOTOS[card.caption].h}
+                alt={card.captionAlt}
+                loading="lazy"
+                decoding="async"
+              />
+            </figure>
+          </section>
         )}
 
         {card.steps && (
